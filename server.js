@@ -1,14 +1,15 @@
-const express = require('express');
-const dotenv = require('dotenv').config();
+const express = require("express");
+const dotenv = require("dotenv").config();
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
-
 const port = process.env.PORT || 5000;
 
-app.get('/', (req, res) => {
-  res.send('Contact Manager API is running...');
-});
+app.use(express.json());
+
+app.use("/api/contacts", require("./routes/contactsRoutes"));
+app.use(errorHandler); // 🧩 Error handling middleware
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`✅ Server running on port ${port}`);
 });
