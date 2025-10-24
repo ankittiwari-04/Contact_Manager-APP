@@ -1,15 +1,33 @@
-const express = require("express");
-const dotenv = require("dotenv").config();
-const errorHandler = require("./middleware/errorHandler");
+const express = require('express');
+const dotenv = require('dotenv').config();
+const connectDB = require('./config/db');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
+// connect to DB
+connectDB();
+
+// middleware
 app.use(express.json());
 
-app.use("/api/contacts", require("./routes/contactsRoutes"));
-app.use(errorHandler); // 🧩 Error handling middleware
+// routes
+app.use('/api/contacts', require('./routes/contactsRoutes'));
 
-app.listen(port, () => {
-  console.log(`✅ Server running on port ${port}`);
+// health route
+app.get('/', (req, res) => {
+  res.json({ message: 'Contact Manager API is running' });
+});
+
+// error handler (should be last)
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log(` Server running on port ${PORT}`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled Rejection:', err);
+  // optionally exit process: process.exit(1);
 });
